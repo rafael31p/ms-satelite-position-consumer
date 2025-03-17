@@ -1,4 +1,4 @@
-package com.quasar.fire;
+package com.quasar.fire.resources;
 
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;

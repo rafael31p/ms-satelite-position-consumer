@@ -1,4 +1,4 @@
-package com.quasar.fire;
+package com.quasar.fire.resources;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

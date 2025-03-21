@@ -29,3 +29,6 @@ jobs:
 
       - name: Build
         run: ./mvnw verify -B
+
+      - name: Build-native-image
+        run: ./mvnw clean package -Pnative -Dquarkus.native.container-build=true

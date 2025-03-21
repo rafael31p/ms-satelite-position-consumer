@@ -31,7 +31,7 @@ jobs:
         run: ./mvnw verify -B
 
       - name: Build-native-image
-        run: ./mvnw clean package -Pnative -Dquarkus.profile=prod -Dquarkus.native.container-build=true
+        run: ./mvnw clean package -Pnative -Dquarkus.profile=prod -Dquarkus.native.container-build=true -DskipTests=true
         
       - name: Deploy to Azure VM
         env:
@@ -46,12 +46,12 @@ jobs:
 
             echo "📦 Clonando la última versión del proyecto..."
             rm -rf ~/ms-satelite-position-consumer
-            git clone https://${GH_PAT}@github.com/rafael31p/ms-satelite-position-consumer.git
+            git clone git@github.com:rafael31p/ms-satelite-position-consumer.git  ✅
 
             cd ms-satelite-position-consumer
 
             echo "⚙️ Construyendo imagen nativa con Docker..."
-            ./mvnw clean package -Pnative -Dquarkus.profile=prod -Dnative-image.docker-build=true
+            ./mvnw clean package -Pnative -Dquarkus.profile=prod -Dnative-image.docker-build=true -DskipTests=true
             docker build -t quarkus-app .
 
             echo "🛑 Deteniendo contenedor anterior si existe..."

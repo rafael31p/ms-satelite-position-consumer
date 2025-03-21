@@ -40,7 +40,7 @@ public class ConsultNavePositionServiceImpl implements IConsultNavePositionServi
             try {
                 return result == null ? Uni.createFrom().nullItem() : Uni.createFrom().item(mapper.readValue(result, SatellitePositions.class));
             } catch (Exception e) {
-                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, result));
+                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, e.getMessage()));
             }
         });
     }
@@ -55,7 +55,7 @@ public class ConsultNavePositionServiceImpl implements IConsultNavePositionServi
                 cacheNave.put(satelliteDistance1.name(), mapper.writeValueAsString(satellitePositions));
                 return Uni.createFrom().item(satellitePositions);
             } catch (Exception e) {
-                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, satelliteDistance1.toString()));
+                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, e.getMessage()));
             }
         }).onItem().ifNull().failWith(
                 () -> new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, satelliteDistance.toString()))
@@ -72,7 +72,7 @@ public class ConsultNavePositionServiceImpl implements IConsultNavePositionServi
                             try {
                                 return mapper.readValue(result, SatellitePositions.class);
                             } catch (Exception e) {
-                                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, result));
+                                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, e.getMessage()));
                             }
                         })
                         .toList()).onItem().ifNull().failWith(

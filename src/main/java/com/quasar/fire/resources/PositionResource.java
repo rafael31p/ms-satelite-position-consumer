@@ -5,6 +5,7 @@ import com.quasar.fire.model.dtos.SatelliteDistance;
 import com.quasar.fire.services.IPositionCalculateService;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -14,10 +15,11 @@ import jakarta.ws.rs.core.Response;
 @Path("/topsecret_split")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class PositionResources {
+public class PositionResource {
     private final IPositionCalculateService positionCalculateService;
-
-    public PositionResources(IPositionCalculateService positionCalculateService) {
+    
+    @Inject
+    public PositionResource(IPositionCalculateService positionCalculateService) {
         this.positionCalculateService = positionCalculateService;
     }
 

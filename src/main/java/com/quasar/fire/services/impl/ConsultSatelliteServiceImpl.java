@@ -43,7 +43,7 @@ public class ConsultSatelliteServiceImpl implements IConsultSatelliteService {
                             try {
                                 return mapper.readValue(value, Satellite.class);
                             } catch (Exception e) {
-                                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, value));
+                                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, e.getMessage()));
                             }
                         })
                         .toList()

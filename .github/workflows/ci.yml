@@ -46,8 +46,8 @@ jobs:
 
             echo "📦 Clonando la última versión del proyecto..."
             rm -rf ~/ms-satelite-position-consumer
-            git clone git@github.com:rafael31p/ms-satelite-position-consumer.git  ✅
-
+            git clone git@github.com:rafael31p/ms-satelite-position-consumer.git  
+            
             cd ms-satelite-position-consumer
 
             echo "⚙️ Construyendo imagen nativa con Docker..."

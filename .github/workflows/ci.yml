@@ -40,8 +40,8 @@ jobs:
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 4.246.220.137 >> ~/.ssh/known_hosts
-          ssh -i ~/.ssh/id_rsa rafael31p@4.246.220.137 << 'EOF'
+          ssh-keyscan -H $AZURE_VM >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_rsa rafael31p@$AZURE_VM << 'EOF'
             set -e
 
             echo "📦 Clonando la última versión del proyecto..."

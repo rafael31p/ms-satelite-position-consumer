@@ -52,6 +52,7 @@ jobs:
             echo "⚙️ Construyendo imagen nativa con Docker..."
             export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
             export PATH=$JAVA_HOME/bin:$PATH
+            export DOCKER_BUILDKIT=1
             ./mvnw clean package -Pnative -Dquarkus.profile=prod -Dnative-image.docker-build=true -DskipTests=true
             docker build -t quarkus-app .
 

@@ -11,8 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      AZURE_VM: ${{ secrets.AZURE_VM }}
     steps:
       - uses: actions/checkout@v4
 
@@ -34,12 +32,14 @@ jobs:
         
       - name: Deploy to Azure VM
         env:
+          AZURE_VM: ${{ secrets.AZURE_VM }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $AZURE_VM >> ~/.ssh/known_hosts
+          
           ssh -i ~/.ssh/id_rsa rafael31p@$AZURE_VM << 'EOF'
             set -e
 

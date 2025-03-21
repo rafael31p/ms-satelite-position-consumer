@@ -61,7 +61,7 @@ jobs:
             docker rm quarkus-container || true
 
             echo "🚀 Desplegando nueva imagen..."
-            docker run -d --name quarkus-container -p 8080:8080 quarkus-app
+            docker run -d --name quarkus-container --network quasar-net -p 8080:8080 quarkus-app
 
             echo "♻️ Habilitando reinicio automático..."
             docker update --restart unless-stopped quarkus-container

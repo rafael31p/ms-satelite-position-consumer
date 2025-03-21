@@ -1,19 +1,103 @@
 # ms-satelite-position-consumer
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Este proyecto es un servicio que calcula la posicion de una nave en el espacio,
+a partir de la informacion que llega de tres satelites permitiendo la trilateracion
+de la posicion de la nave.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Tecnologias
 
-## Running the application in dev mode
+> ***GraalVM***: Es un entorno de ejecución de aplicaciones que proporciona alta eficiencia y bajo consumo de recursos.
+> ***Quarkus***: Es un framework de Java diseñado para aplicaciones nativas de la nube, optimizado para OpenJDK HotSpot y GraalVM, ofreciendo un tiempo de inicio ultrarrápido y un uso de memoria reducido.
+> ***Infinispan***: Es una plataforma de datos distribuida y altamente escalable para aplicaciones en la nube y en la periferia.
+> ***OpenJDK 21***: Es una implementación de código abierto de la Plataforma Java, estándar para el desarrollo y ejecución de aplicaciones Java.
+> ***Docker/Podman***: Es una plataforma de contenedores de software que permite la creación, implementación y ejecución de aplicaciones en contenedores.
 
-You can run your application in dev mode that enables live coding using:
+## Despliegue local
+para el despliegue local se debe tener instalado en la maquina:
+- Docker
+- OpenJDK 21 / graalvm-jdk-21.0.6+8.1
+en el caso de docker se debe tener en cuenta que se debe tener el servicio de docker corriendo en la maquina.
+para poder desplegar el infinispan que genera el devservices de quarkus para el manejo de cache se debe ejecutar el siguiente comando:
 
 ```shell script
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+## Configuracion de cache
 
+Se debe ingresar en el navegador al siguiente link: [http://localhost:11222](http://localhost:11222) y se debe ingresar el usuario y 
+contraseña que se encuentra en el archivo application.properties en modo dev.
+
+Dentro de la consola se debe crear una cache con el nombre de "SATELLITE_POSITIONS" y 
+se debe subir los siguientes json con su respectiva key:
+***key: kenobi***
+```json
+{
+  "name": "kenobi",
+  "distance": 100.0,
+  "message": ["", "este", "", "", "mensaje"]
+}
+```
+***key: skywalker***
+```json
+{
+  "name": "skywalker",
+  "distance": 115.5,
+  "message": ["este", "", "un", "", ""]
+}
+```
+***key: sato*** 
+```json
+{
+  "name": "sato",
+  "distance": 142.7,
+  "message": ["", "", "un", "mensaje", ""]
+}
+```
+Ya con esto podemos realizar 3 peticiones a las siguientes api:
+```curl
+curl -X 'POST' \
+  'http://localhost:8080/topsecret' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "satellites": [
+    {"name": "kenobi", "distance": 447.213, "message": ["", "este", "es", "un", "mensaje"]},
+    {"name": "skywalker", "distance": 223.606, "message": ["este", "", "un", "mensaje", "","secreto"]},
+    {"name": "sato", "distance": 632.455, "message": ["", "", "es", "", "mensaje"]}
+  ]
+}'
+```
+```curl
+curl -X 'POST' \
+  'http://localhost:8080/topsecret_split/skywalker' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "distance": 223.606,
+  "message": ["este", "", "un", "mensaje", "","secreto"]
+}'
+```
+```curl
+curl -X 'POST' \
+  'http://localhost:8080/topsecret_split/kenobi' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "distance": 447.213,
+  "message": ["", "este", "es", "un", "mensaje"]
+}'
+```
+```curl
+curl -X 'POST' \
+  'http://localhost:8080/topsecret_split/sato' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "distance": 632.455,
+  "message": ["", "", "es", "", "mensaje"]
+}'
+```
 ## Packaging and running the application
 
 The application can be packaged using:

@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      AZURE_VM: ${{ secrets.AZURE_VM }}
     steps:
       - uses: actions/checkout@v4
 
@@ -29,9 +31,6 @@ jobs:
 
       - name: Build
         run: ./mvnw verify -B
-
-      - name: Build-native-image
-        run: ./mvnw clean package -Pnative -Dquarkus.profile=prod -Dquarkus.native.container-build=true -DskipTests=true
         
       - name: Deploy to Azure VM
         env:

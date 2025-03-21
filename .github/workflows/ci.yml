@@ -37,12 +37,11 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          echo "$SSH_PRIVATE_KEY" > id_rsa
-          chmod 600 id_rsa
           mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H 4.246.220.137 >> ~/.ssh/known_hosts
-
-          ssh -i id_rsa rafael31p@4.246.220.137 << 'EOF'
+          ssh -i ~/.ssh/id_rsa rafael31p@4.246.220.137 << 'EOF'
             set -e
 
             echo "📦 Clonando la última versión del proyecto..."

@@ -31,4 +31,38 @@ jobs:
         run: ./mvnw verify -B
 
       - name: Build-native-image
-        run: ./mvnw clean package -Pnative -Dquarkus.native.container-build=true
+        run: ./mvnw clean package -Pnative -Dquarkus.profile=prod -Dquarkus.native.container-build=true
+        
+      - name: Deploy to Azure VM
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > id_rsa
+          chmod 600 id_rsa
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 4.246.220.137 >> ~/.ssh/known_hosts
+
+          ssh -i id_rsa rafael31p@4.246.220.137 << 'EOF'
+            set -e
+
+            echo "📦 Clonando la última versión del proyecto..."
+            rm -rf ~/ms-satelite-position-consumer
+            git clone https://github.com/rafael31p/ms-satelite-position-consumer.git
+            cd ms-satelite-position-consumer
+
+            echo "⚙️ Construyendo imagen nativa con Docker..."
+            ./mvnw clean package -Pnative -Dquarkus.profile=prod -Dnative-image.docker-build=true
+            docker build -t quarkus-app .
+
+            echo "🛑 Deteniendo contenedor anterior si existe..."
+            docker stop quarkus-container || true
+            docker rm quarkus-container || true
+
+            echo "🚀 Desplegando nueva imagen..."
+            docker run -d --name quarkus-container -p 8080:8080 quarkus-app
+
+            echo "♻️ Habilitando reinicio automático..."
+            docker update --restart unless-stopped quarkus-container
+
+            echo "✅ Despliegue completado con éxito en la VM."
+          EOF

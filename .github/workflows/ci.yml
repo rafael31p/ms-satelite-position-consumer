@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      AZURE_VM: ${{ secrets.AZURE_VM }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -31,9 +34,6 @@ jobs:
         run: ./mvnw verify -B
         
       - name: Deploy to Azure VM
-        env:
-          AZURE_VM: ${{ secrets.AZURE_VM }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa

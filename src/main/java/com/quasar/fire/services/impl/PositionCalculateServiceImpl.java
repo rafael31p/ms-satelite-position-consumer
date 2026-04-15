@@ -75,7 +75,7 @@ public class PositionCalculateServiceImpl implements IPositionCalculateService {
             LocalDateTime now = LocalDateTime.now();
             Long timeSeconds = Duration.between(result.timestamp(), now).getSeconds();
             if(timeSecondsLimit > timeSeconds) {
-                LOGGER.infof("La posición de la nave ha expirado, se guardará en cache");
+                LOGGER.infof("La posición de la nave está vigente, se retorna del cache");
                 return Uni.createFrom().item(result.satelliteDistance());
             }else {
                 return Uni.createFrom().nullItem();
@@ -89,7 +89,8 @@ public class PositionCalculateServiceImpl implements IPositionCalculateService {
     @Override
     public Uni<CustomResponse> calculatePositionByCache(){
         List<String> namesSatellites = List.of(satellites.split(","));
-        Uni<List<SatellitePositions>> navePositions = consultNavePositionService.getAllNavePositionByName(namesSatellites);
+        Uni<List<SatellitePositions>> navePositions = consultNavePositionService.getAllNavePositionByName(namesSatellites)
+                .memoize().indefinitely();
         Uni<List<Double>> distance = navePositions.map(this::extractDistances);
         Uni<String> message = navePositions.map(this::extractMessage);
         Uni<List<Position>> positions = consultSatelliteService.getAllSatellitesByName(namesSatellites)

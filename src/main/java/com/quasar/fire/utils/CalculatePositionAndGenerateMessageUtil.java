@@ -65,7 +65,4 @@ public class CalculatePositionAndGenerateMessageUtil {
                 .distinct()
                 .collect(Collectors.joining(" "));
     }
-    private CalculatePositionAndGenerateMessageUtil() {
-
-    }
 }

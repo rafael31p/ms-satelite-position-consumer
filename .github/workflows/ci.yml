@@ -36,6 +36,10 @@ jobs:
       - name: Run tests
         run: ./mvnw verify -B
 
+      - name: Build native binary
+        if: github.event_name == 'push'
+        run: ./mvnw package -Pnative -Dquarkus.native.container-build=true -Dquarkus.profile=prod -DskipTests=true
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

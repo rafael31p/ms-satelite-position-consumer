@@ -8,6 +8,7 @@ import com.quasar.fire.services.IConsultSatelliteService;
 import com.quasar.fire.utils.Constants;
 import io.quarkus.infinispan.client.Remote;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -36,7 +37,7 @@ public class ConsultSatelliteServiceImpl implements IConsultSatelliteService {
 
     @Override
     public Uni<List<Satellite>> getAllSatellitesByName(List<String> nameSatellites) {
-        return Uni.createFrom().item(nameSatellites.stream()
+        return Uni.createFrom().item(() -> nameSatellites.stream()
                         .map(cacheSatellites::get)
                         .filter(Objects::nonNull)
                         .map(value -> {
@@ -48,6 +49,7 @@ public class ConsultSatelliteServiceImpl implements IConsultSatelliteService {
                         })
                         .toList()
                 )
+                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
                 .onItem().ifNull().failWith(()-> new CustomFuntionalException(messageErrorFuntional.replace(Constants.VALUE, nameSatellites.toString())));
     }
 }

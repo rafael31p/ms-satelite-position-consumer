@@ -9,6 +9,7 @@ import com.quasar.fire.services.IConsultNavePositionService;
 import com.quasar.fire.utils.Constants;
 import io.quarkus.infinispan.client.Remote;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -36,34 +37,37 @@ public class ConsultNavePositionServiceImpl implements IConsultNavePositionServi
     }
     @Override
     public Uni<SatellitePositions> getNavePositionByName(String nameSatellite) {
-        return Uni.createFrom().item(cacheNave.get(nameSatellite)).flatMap(result -> {
-            try {
-                return result == null ? Uni.createFrom().nullItem() : Uni.createFrom().item(mapper.readValue(result, SatellitePositions.class));
-            } catch (Exception e) {
-                throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, e.getMessage()));
-            }
-        });
+        return Uni.createFrom().item(() -> cacheNave.get(nameSatellite))
+                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+                .flatMap(result -> {
+                    try {
+                        return result == null ? Uni.createFrom().nullItem() : Uni.createFrom().item(mapper.readValue(result, SatellitePositions.class));
+                    } catch (Exception e) {
+                        throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, e.getMessage()));
+                    }
+                });
     }
     @Override
     public Uni<SatellitePositions> saveCacheNavePosition(SatelliteDistance satelliteDistance) {
-        return Uni.createFrom().item(satelliteDistance).flatMap(satelliteDistance1 -> {
+        return Uni.createFrom().item(() -> {
             try {
                 SatellitePositions satellitePositions = new SatellitePositions(
-                        satelliteDistance1,
+                        satelliteDistance,
                         LocalDateTime.now()
                 );
-                cacheNave.put(satelliteDistance1.name(), mapper.writeValueAsString(satellitePositions));
-                return Uni.createFrom().item(satellitePositions);
+                cacheNave.put(satelliteDistance.name(), mapper.writeValueAsString(satellitePositions));
+                return satellitePositions;
             } catch (Exception e) {
                 throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, e.getMessage()));
             }
-        }).onItem().ifNull().failWith(
+        }).runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+        .onItem().ifNull().failWith(
                 () -> new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, satelliteDistance.toString()))
         );
     }
     @Override
     public Uni<List<SatellitePositions>> getAllNavePositionByName(List<String> nameSatellite) {
-        return Uni.createFrom().item(
+        return Uni.createFrom().item(() ->
                 nameSatellite
                         .stream()
                         .map(cacheNave::get)
@@ -75,7 +79,9 @@ public class ConsultNavePositionServiceImpl implements IConsultNavePositionServi
                                 throw new CustomTechnicalException(messageErrorTechnical.replace(Constants.VALUE, e.getMessage()));
                             }
                         })
-                        .toList()).onItem().ifNull().failWith(
+                        .toList()
+        ).runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+        .onItem().ifNull().failWith(
                 () -> new CustomFuntionalException(messageErrorFuntional.replace(Constants.VALUE, nameSatellite.toString()))
         );
     }

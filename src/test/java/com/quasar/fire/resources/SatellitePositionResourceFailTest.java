@@ -33,21 +33,20 @@ class SatellitePositionResourceFailTest {
         given().contentType(ContentType.JSON)
                 .body(request)
                 .when()
-                .post("/topsecret_split/"+nameSatellite)
+                .post("/topsecret_split/" + nameSatellite)
                 .then()
                 .statusCode(200)
                 .body("name", equalTo(nameSatellite))
                 .body("distance", equalTo(447.213f));
     }
 
-
     @BeforeEach
-    void init(){
+    void init() {
         cacheNave.clear();
-        try{
+        try {
             request = mapper.readValue(new String(Files.readAllBytes(Path.of("src/test/resources/request/RequestTopSecretSplitKenobi.json"))), JsonNode.class);
-            cacheNave.put("kenobi",new String(Files.readAllBytes(Path.of("src/test/resources/cache/KenobiDistanceCache.json"))));
-        }catch (Exception exception) {
+            cacheNave.put("kenobi", new String(Files.readAllBytes(Path.of("src/test/resources/cache/KenobiDistanceCache.json"))));
+        } catch (Exception exception) {
             LOGGER.errorf("Error al cargar los datos de prueba en el cache %s", exception);
         }
     }

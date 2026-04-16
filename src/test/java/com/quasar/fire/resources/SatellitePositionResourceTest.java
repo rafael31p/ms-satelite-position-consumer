@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 @QuarkusTest
 class SatellitePositionResourceTest {
-    private static final Logger LOGGER = Logger.getLogger(PositionResourceTest.class);
+    private static final Logger LOGGER = Logger.getLogger(SatellitePositionResourceTest.class);
     @Inject
     @Remote("SATELLITE_POSITIONS")
     RemoteCache<String, String> cacheSatellites;
@@ -55,6 +55,4 @@ class SatellitePositionResourceTest {
             LOGGER.errorf("Error al cargar los datos de prueba en el cache %s", exception);
         }
     }
-
-
 }

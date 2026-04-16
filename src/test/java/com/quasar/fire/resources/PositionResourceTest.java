@@ -27,7 +27,6 @@ class PositionResourceTest {
     @Remote("SATELLITE_POSITIONS")
     RemoteCache<String, String> cacheSatellites;
 
-
     private static JsonNode request;
     private static String path = "src/test/resources/request/";
 
@@ -39,12 +38,13 @@ class PositionResourceTest {
         given().contentType(ContentType.JSON)
                 .body(request)
                 .when()
-                .post("/topsecret_split/"+nameSatellite)
+                .post("/topsecret_split/" + nameSatellite)
                 .then()
                 .statusCode(200)
                 .body("name", equalTo(nameSatellite))
                 .body("distance", equalTo(447.213f));
     }
+
     @Test
     @Order(1)
     void givenTopSecretSplitSkywalkerThenSuccesTest() {
@@ -53,12 +53,13 @@ class PositionResourceTest {
         given().contentType(ContentType.JSON)
                 .body(request)
                 .when()
-                .post("/topsecret_split/"+nameSatellite)
+                .post("/topsecret_split/" + nameSatellite)
                 .then()
                 .statusCode(200)
                 .body("name", equalTo(nameSatellite))
                 .body("distance", equalTo(223.606f));
     }
+
     @Test
     @Order(2)
     void givenTopSecretSplitSatoThenSuccesTest() {
@@ -67,12 +68,13 @@ class PositionResourceTest {
         given().contentType(ContentType.JSON)
                 .body(request)
                 .when()
-                .post("/topsecret_split/"+nameSatellite)
+                .post("/topsecret_split/" + nameSatellite)
                 .then()
                 .statusCode(200)
                 .body("name", equalTo(nameSatellite))
                 .body("distance", equalTo(632.455f));
     }
+
     @Test
     void givenTopSecrectSplitThenSucessTest() {
         given().contentType(ContentType.JSON)
@@ -84,6 +86,7 @@ class PositionResourceTest {
                 .body("position.y", equalTo(-112.498375f))
                 .body("message", equalTo("este es un mensaje secreto"));
     }
+
     private void loadRequest(String fileName) {
         try {
             request = mapper.readValue(new String(Files.readAllBytes(Path.of(path + fileName))), JsonNode.class);
@@ -102,11 +105,8 @@ class PositionResourceTest {
             cacheSatellites.put("sato", sato);
             cacheSatellites.put("kenobi", kenobi);
             cacheSatellites.put("skywalker", skywalker);
-        }catch (Exception exception) {
+        } catch (Exception exception) {
             LOGGER.errorf("Error al cargar los datos de prueba en el cache %s", exception);
         }
     }
-
-
-
 }

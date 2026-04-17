@@ -34,12 +34,10 @@ public class GlobalExceptionHandler {
     }
 
     private int mapStatus(DomainException e) {
-        if (e instanceof InsufficientSatellitesException || e instanceof SignalNotFoundException) {
-            return 404;
-        }
-        if (e instanceof NoUniqueIntersectionException) {
-            return 500;
-        }
-        return 500;
+        return switch (e) {
+            case InsufficientSatellitesException _, SignalNotFoundException _ -> 404;
+            case NoUniqueIntersectionException _ -> 500;
+            default -> 500;
+        };
     }
 }

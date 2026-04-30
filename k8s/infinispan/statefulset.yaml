@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: infinispan
+  namespace: quasar-fire
+  labels:
+    app: infinispan
+spec:
+  serviceName: infinispan
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infinispan
+  template:
+    metadata:
+      labels:
+        app: infinispan
+    spec:
+      containers:
+        - name: infinispan
+          image: infinispan/server:15.0
+          ports:
+            - containerPort: 11222
+              name: hotrod
+          env:
+            - name: USER
+              valueFrom:
+                secretKeyRef:
+                  name: infinispan-credentials
+                  key: username
+            - name: PASS
+              valueFrom:
+                secretKeyRef:
+                  name: infinispan-credentials
+                  key: password
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /rest/v2/cache-managers/default/health/status
+              port: 11222
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - name: data
+              mountPath: /opt/infinispan/server/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: infinispan
+  namespace: quasar-fire
+spec:
+  selector:
+    app: infinispan
+  ports:
+    - port: 11222
+      targetPort: 11222
+      name: hotrod
+  clusterIP: None

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: infinispan-config
+  namespace: quasar-fire
+data:
+  infinispan.xml: |
+    <infinispan>
+      <cache-container>
+        <distributed-cache name="SATELLITE_POSITIONS" mode="SYNC">
+          <encoding media-type="application/json"/>
+        </distributed-cache>
+        <distributed-cache name="NAVE_POSITIONS" mode="SYNC">
+          <encoding media-type="application/json"/>
+        </distributed-cache>
+        <distributed-cache name="LOCATION_HISTORY" mode="SYNC">
+          <encoding media-type="application/json"/>
+        </distributed-cache>
+      </cache-container>
+    </infinispan>

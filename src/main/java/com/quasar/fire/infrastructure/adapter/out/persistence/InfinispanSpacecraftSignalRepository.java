@@ -11,10 +11,14 @@ import com.quasar.fire.infrastructure.adapter.out.persistence.entity.SpacecraftS
 import io.quarkus.infinispan.client.Remote;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.jboss.logging.Logger;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +41,9 @@ public class InfinispanSpacecraftSignalRepository implements SpacecraftSignalRep
     }
 
     @Override
+    @Retry(maxRetries = 3, delay = 200, jitter = 100)
+    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
+    @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.5, delay = 5000)
     public Optional<SatelliteSignal> findByName(SatelliteName name) {
         String json = cache.get(name.value());
         if (json == null) {
@@ -46,6 +53,9 @@ public class InfinispanSpacecraftSignalRepository implements SpacecraftSignalRep
     }
 
     @Override
+    @Retry(maxRetries = 3, delay = 200, jitter = 100)
+    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
+    @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.5, delay = 5000)
     public List<SatelliteSignal> findByNames(List<SatelliteName> names) {
         return names.stream()
                 .map(name -> cache.get(name.value()))
@@ -55,6 +65,9 @@ public class InfinispanSpacecraftSignalRepository implements SpacecraftSignalRep
     }
 
     @Override
+    @Retry(maxRetries = 3, delay = 200, jitter = 100)
+    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
+    @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.5, delay = 5000)
     public SatelliteSignal save(SatelliteSignal signal) {
         try {
             SatelliteDistanceEntity distEntity = new SatelliteDistanceEntity(

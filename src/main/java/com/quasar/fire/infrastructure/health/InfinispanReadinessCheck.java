@@ -1,4 +1,4 @@
-package com.quasar.fire.resources;
+package com.quasar.fire.infrastructure.health;
 
 import io.quarkus.infinispan.client.Remote;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,6 +7,7 @@ import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Readiness;
 import org.infinispan.client.hotrod.RemoteCache;
+import org.infinispan.client.hotrod.RemoteCacheManager;
 
 @Readiness
 @ApplicationScoped
@@ -22,8 +23,14 @@ public class InfinispanReadinessCheck implements HealthCheck {
     @Override
     public HealthCheckResponse call() {
         try {
-            cacheSatellites.size();
-            return HealthCheckResponse.up("infinispan-connection");
+            RemoteCacheManager manager = cacheSatellites.getRemoteCacheManager();
+            if (manager != null && manager.isStarted()) {
+                return HealthCheckResponse.up("infinispan-connection");
+            }
+            return HealthCheckResponse.named("infinispan-connection")
+                    .down()
+                    .withData("reason", "RemoteCacheManager is not started")
+                    .build();
         } catch (Exception e) {
             return HealthCheckResponse.named("infinispan-connection")
                     .down()

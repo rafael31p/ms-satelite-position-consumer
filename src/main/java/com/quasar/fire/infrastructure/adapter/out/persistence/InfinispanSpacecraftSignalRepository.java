@@ -42,7 +42,7 @@ public class InfinispanSpacecraftSignalRepository implements SpacecraftSignalRep
 
     @Override
     @Retry(maxRetries = 3, delay = 200, jitter = 100)
-    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 10, unit = ChronoUnit.SECONDS)
     @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.5, delay = 5000)
     public Optional<SatelliteSignal> findByName(SatelliteName name) {
         String json = cache.get(name.value());
@@ -54,7 +54,7 @@ public class InfinispanSpacecraftSignalRepository implements SpacecraftSignalRep
 
     @Override
     @Retry(maxRetries = 3, delay = 200, jitter = 100)
-    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 10, unit = ChronoUnit.SECONDS)
     @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.5, delay = 5000)
     public List<SatelliteSignal> findByNames(List<SatelliteName> names) {
         return names.stream()
@@ -66,7 +66,7 @@ public class InfinispanSpacecraftSignalRepository implements SpacecraftSignalRep
 
     @Override
     @Retry(maxRetries = 3, delay = 200, jitter = 100)
-    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 10, unit = ChronoUnit.SECONDS)
     @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.5, delay = 5000)
     public SatelliteSignal save(SatelliteSignal signal) {
         try {

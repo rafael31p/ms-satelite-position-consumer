@@ -5,6 +5,7 @@ import com.quasar.fire.domain.model.SpacecraftLocation;
 import com.quasar.fire.domain.port.in.LocateFromCacheUseCase;
 import com.quasar.fire.domain.port.in.RegisterSignalUseCase;
 import com.quasar.fire.infrastructure.adapter.in.rest.dto.ErrorResponse;
+import com.quasar.fire.infrastructure.adapter.in.rest.dto.SatelliteRegisterRequest;
 import com.quasar.fire.infrastructure.adapter.in.rest.dto.SatelliteSignalRequest;
 import com.quasar.fire.infrastructure.adapter.in.rest.dto.TrilaterationResponse;
 import com.quasar.fire.infrastructure.adapter.in.rest.mapper.SignalMapper;
@@ -77,7 +78,7 @@ public class TopSecretSplitResource {
             @NotBlank @Size(max = 50)
             String satelliteName,
 
-            @Valid SatelliteSignalRequest request
+            @Valid SatelliteRegisterRequest request
     ) {
         SatelliteSignal signal = SignalMapper.toSignal(request, satelliteName);
         SatelliteSignal result = registerUseCase.register(signal, ttlSeconds);

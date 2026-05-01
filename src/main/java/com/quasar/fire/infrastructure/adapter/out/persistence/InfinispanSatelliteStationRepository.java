@@ -38,7 +38,7 @@ public class InfinispanSatelliteStationRepository implements SatelliteStationRep
 
     @Override
     @Retry(maxRetries = 3, delay = 200, jitter = 100)
-    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 10, unit = ChronoUnit.SECONDS)
     @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.5, delay = 5000)
     public List<SatelliteStation> findByNames(List<SatelliteName> names) {
         return names.stream()

@@ -6,6 +6,7 @@ import com.quasar.fire.domain.model.MessageFragment;
 import com.quasar.fire.domain.model.SatelliteName;
 import com.quasar.fire.domain.model.SatelliteSignal;
 import com.quasar.fire.domain.model.SpacecraftLocation;
+import com.quasar.fire.infrastructure.adapter.in.rest.dto.SatelliteRegisterRequest;
 import com.quasar.fire.infrastructure.adapter.in.rest.dto.SatelliteSignalRequest;
 import com.quasar.fire.infrastructure.adapter.in.rest.dto.TrilaterationRequest;
 import com.quasar.fire.infrastructure.adapter.in.rest.dto.TrilaterationResponse;
@@ -36,7 +37,7 @@ public class SignalMapper {
                 .toList();
     }
 
-    public static SatelliteSignal toSignal(SatelliteSignalRequest request, String satelliteName) {
+    public static SatelliteSignal toSignal(SatelliteRegisterRequest request, String satelliteName) {
         return new SatelliteSignal(
                 new SatelliteName(satelliteName),
                 new Distance(request.distance()),

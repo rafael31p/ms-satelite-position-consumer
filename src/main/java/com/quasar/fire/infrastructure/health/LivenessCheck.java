@@ -1,15 +1,16 @@
-package com.quasar.fire.resources;
+package com.quasar.fire.infrastructure.health;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Liveness;
 
 @Liveness
-public class MyLivenessCheck implements HealthCheck {
+@ApplicationScoped
+public class LivenessCheck implements HealthCheck {
 
     @Override
     public HealthCheckResponse call() {
-        return HealthCheckResponse.up("alive");
+        return HealthCheckResponse.up("liveness");
     }
-
 }

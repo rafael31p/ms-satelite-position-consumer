@@ -18,11 +18,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.util.Arrays;
 import java.util.List;
 
-@ApplicationScoped
 public class BeanConfiguration {
-
-    @ConfigProperty(name = "quasar.fire.constants.name.satellites")
-    String satelliteNames;
 
     @Produces
     @ApplicationScoped
@@ -58,7 +54,8 @@ public class BeanConfiguration {
             SpacecraftSignalRepository signalRepo,
             SatelliteStationRepository stationRepo,
             TrilaterationService trilaterationService,
-            MessageReconstructionService messageService
+            MessageReconstructionService messageService,
+            @ConfigProperty(name = "quasar.fire.constants.name.satellites") String satelliteNames
     ) {
         List<SatelliteName> names = Arrays.stream(satelliteNames.split(","))
                 .map(SatelliteName::new)
